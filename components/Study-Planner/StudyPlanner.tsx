@@ -119,6 +119,53 @@ function parseFlashcards(text: string): Flashcard[] {
     .filter((card) => card.front && card.back);
 }
 
+function parseTutorQuiz(text: string): TestQuestion[] {
+  const questionBlocks = Array.from(
+    text.matchAll(/\[QUESTION\]([\s\S]*?)\[\/QUESTION\]/gi)
+  );
+
+  const parsedQuestions: TestQuestion[] = [];
+
+  questionBlocks.forEach((match) => {
+    const block = match[1];
+
+    const question =
+      block.match(/^Question:\s*(.+)$/im)?.[1]?.trim() || "";
+
+    const options = ["A", "B", "C", "D"].map(
+      (letter) =>
+        block
+          .match(new RegExp(`^${letter}:\\s*(.+)$`, "im"))?.[1]
+          ?.trim() || ""
+    );
+
+    const answerLetter =
+      block.match(/^Answer:\s*([A-D])/im)?.[1]?.toUpperCase() || "";
+
+    const correctIndex = ["A", "B", "C", "D"].indexOf(answerLetter);
+
+    const explanation =
+      block.match(/^Explanation:\s*(.+)$/im)?.[1]?.trim() ||
+      "Review the correct answer and try again.";
+
+    if (
+      question &&
+      options.every(Boolean) &&
+      correctIndex >= 0
+    ) {
+      parsedQuestions.push({
+        question,
+        options,
+        correctIndex,
+        explanation,
+        selectedIndex: null,
+      });
+    }
+  });
+
+  return parsedQuestions;
+}
+
 function FlashcardDeck({ cards }: { cards: Flashcard[] }) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [flipped, setFlipped] = useState(false);
@@ -146,6 +193,110 @@ function FlashcardDeck({ cards }: { cards: Flashcard[] }) {
 
     setCurrentIndex(nextIndex);
     setFlipped(false);
+  }
+
+  function TutorQuizDeck({ questions }: { questions: TestQuestion[] }) {
+    const [quizQuestions, setQuizQuestions] =
+      useState<TestQuestion[]>(questions);
+    const [currentIndex, setCurrentIndex] = useState(0);
+  
+    const currentQuestion = quizQuestions[currentIndex];
+    const answered = currentQuestion.selectedIndex != null;
+  
+    function selectAnswer(optionIndex: number) {
+      if (answered) return;
+  
+      setQuizQuestions((current) =>
+        current.map((question, index) =>
+          index === currentIndex
+            ? { ...question, selectedIndex: optionIndex }
+            : question
+        )
+      );
+    }
+  
+    const correctCount = quizQuestions.filter(
+      (question) =>
+        question.selectedIndex != null &&
+        question.selectedIndex === question.correctIndex
+    ).length;
+  
+    return (
+      <div className="space-y-3">
+        <div className="flex items-center justify-between text-[11px]">
+          <span className="font-semibold text-emerald-300">
+            Question {currentIndex + 1} of {quizQuestions.length}
+          </span>
+  
+          <span className="text-slate-400">
+            Score: {correctCount}/{quizQuestions.length}
+          </span>
+        </div>
+  
+        <div className="rounded-2xl border border-purple-400 bg-purple-500/10 p-4">
+          <p className="text-sm font-semibold text-white">
+            {currentQuestion.question}
+          </p>
+  
+          <div className="mt-4 space-y-2">
+            {currentQuestion.options.map((option, optionIndex) => {
+              const selected =
+                currentQuestion.selectedIndex === optionIndex;
+              const correct =
+                currentQuestion.correctIndex === optionIndex;
+  
+              let colors =
+                "border-slate-700 bg-slate-900 text-slate-100";
+  
+              if (answered && correct) {
+                colors =
+                  "border-emerald-400 bg-emerald-500/20 text-emerald-100";
+              } else if (answered && selected && !correct) {
+                colors =
+                  "border-rose-400 bg-rose-500/20 text-rose-100";
+              }
+  
+              return (
+                <button
+                  key={optionIndex}
+                  type="button"
+                  onClick={() => selectAnswer(optionIndex)}
+                  className={`w-full rounded-xl border px-3 py-2 text-left text-[11px] font-semibold transition ${colors}`}
+                >
+                  {String.fromCharCode(65 + optionIndex)}. {option}
+                </button>
+              );
+            })}
+          </div>
+  
+          {answered && (
+            <p className="mt-4 rounded-xl bg-slate-950/80 p-3 text-[11px] text-slate-200">
+              {currentQuestion.explanation}
+            </p>
+          )}
+        </div>
+  
+        <div className="flex justify-between gap-2">
+          <button
+            type="button"
+            disabled={currentIndex === 0}
+            onClick={() => setCurrentIndex((current) => current - 1)}
+            className="rounded-full border border-slate-700 px-4 py-2 text-[11px] font-semibold text-slate-200 disabled:opacity-40"
+          >
+            ← Previous
+          </button>
+  
+          <button
+            type="button"
+            disabled={currentIndex === quizQuestions.length - 1}
+            onClick={() => setCurrentIndex((current) => current + 1)}
+            className="rounded-full border border-emerald-400 bg-emerald-500/15 px-4 py-2 text-[11px] font-semibold text-emerald-200 disabled:opacity-40"
+          >
+            Next →
+          </button>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -222,6 +373,100 @@ function FlashcardDeck({ cards }: { cards: Flashcard[] }) {
   );
 }
 
+function ZaryxQuizDeck({ questions }: { questions: TestQuestion[] }) {
+  const [answers, setAnswers] = useState<Record<number, number>>({});
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  const question = questions[currentIndex];
+  const selectedIndex = answers[currentIndex];
+  const answered = selectedIndex !== undefined;
+
+  const score = questions.reduce(
+    (total, item, index) =>
+      answers[index] === item.correctIndex ? total + 1 : total,
+    0
+  );
+
+  return (
+    <div className="space-y-3">
+      <div className="flex justify-between text-[11px]">
+        <span className="font-semibold text-emerald-300">
+          Question {currentIndex + 1} of {questions.length}
+        </span>
+        <span className="text-slate-400">
+          Score: {score}/{questions.length}
+        </span>
+      </div>
+
+      <div className="rounded-2xl border border-purple-400 bg-purple-500/10 p-4">
+        <p className="text-sm font-semibold text-white">
+          {question.question}
+        </p>
+
+        <div className="mt-4 space-y-2">
+          {question.options.map((option, optionIndex) => {
+            const correct = question.correctIndex === optionIndex;
+            const selected = selectedIndex === optionIndex;
+
+            let colors =
+              "border-slate-700 bg-slate-900 text-slate-100";
+
+            if (answered && correct) {
+              colors =
+                "border-emerald-400 bg-emerald-500/20 text-emerald-100";
+            } else if (answered && selected) {
+              colors =
+                "border-rose-400 bg-rose-500/20 text-rose-100";
+            }
+
+            return (
+              <button
+                key={optionIndex}
+                type="button"
+                disabled={answered}
+                onClick={() =>
+                  setAnswers((current) => ({
+                    ...current,
+                    [currentIndex]: optionIndex,
+                  }))
+                }
+                className={`w-full rounded-xl border px-3 py-2 text-left text-[11px] font-semibold ${colors}`}
+              >
+                {String.fromCharCode(65 + optionIndex)}. {option}
+              </button>
+            );
+          })}
+        </div>
+
+        {answered && (
+          <p className="mt-4 rounded-xl bg-slate-950/80 p-3 text-[11px] text-slate-200">
+            {question.explanation}
+          </p>
+        )}
+      </div>
+
+      <div className="flex justify-between gap-2">
+        <button
+          type="button"
+          disabled={currentIndex === 0}
+          onClick={() => setCurrentIndex((current) => current - 1)}
+          className="rounded-full border border-slate-700 px-4 py-2 text-[11px] disabled:opacity-40"
+        >
+          ← Previous
+        </button>
+
+        <button
+          type="button"
+          disabled={currentIndex === questions.length - 1}
+          onClick={() => setCurrentIndex((current) => current + 1)}
+          className="rounded-full border border-emerald-400 px-4 py-2 text-[11px] text-emerald-200 disabled:opacity-40"
+        >
+          Next →
+        </button>
+      </div>
+    </div>
+  );
+}
 
 const STUDY_GOALS: {
   id: Exclude<StudyGoal, "unset">;
@@ -910,6 +1155,11 @@ const [quizCount, setQuizCount] =
 
   const parsedFlashcards = useMemo(
     () => parseFlashcards(tutorResponse),
+    [tutorResponse]
+  );
+
+  const parsedTutorQuiz = useMemo(
+    () => parseTutorQuiz(tutorResponse),
     [tutorResponse]
   );
 
@@ -1790,12 +2040,19 @@ quizCount,
             {tutorResponse && (
   <div className="space-y-3 rounded-lg border border-emerald-500/30 bg-slate-950/95 p-3">
     <p className="text-[11px] font-semibold text-emerald-200">
-      {parsedFlashcards.length > 0
+      {parsedTutorQuiz.length > 0
+        ? "Your Zaryx practice quiz"
+        : parsedFlashcards.length > 0
         ? "Your Zaryx flashcards"
         : "Latest tutor answer"}
     </p>
 
-    {parsedFlashcards.length > 0 ? (
+    {parsedTutorQuiz.length > 0 ? (
+      <ZaryxQuizDeck
+        key={tutorResponse}
+        questions={parsedTutorQuiz}
+      />
+    ) : parsedFlashcards.length > 0 ? (
       <FlashcardDeck cards={parsedFlashcards} />
     ) : (
       <p className="whitespace-pre-wrap text-[11px] text-slate-100">
