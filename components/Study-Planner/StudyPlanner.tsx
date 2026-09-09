@@ -120,49 +120,108 @@ function parseFlashcards(text: string): Flashcard[] {
 }
 
 function FlashcardDeck({ cards }: { cards: Flashcard[] }) {
-  const [flippedCards, setFlippedCards] = useState<number[]>([]);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [flipped, setFlipped] = useState(false);
 
-  function toggleCard(index: number) {
-    setFlippedCards((current) =>
-      current.includes(index)
-        ? current.filter((item) => item !== index)
-        : [...current, index]
-    );
+  if (cards.length === 0) return null;
+
+  const safeIndex = Math.min(currentIndex, cards.length - 1);
+  const currentCard = cards[safeIndex];
+
+  function showCard(index: number) {
+    const nextIndex = (index + cards.length) % cards.length;
+    setCurrentIndex(nextIndex);
+    setFlipped(false);
+  }
+
+  function shuffleCard() {
+    if (cards.length < 2) {
+      setFlipped(false);
+      return;
+    }
+
+    const randomIndex = Math.floor(Math.random() * (cards.length - 1));
+    const nextIndex =
+      randomIndex >= safeIndex ? randomIndex + 1 : randomIndex;
+
+    setCurrentIndex(nextIndex);
+    setFlipped(false);
   }
 
   return (
-    <div className="grid gap-3 sm:grid-cols-2">
-      {cards.map((card, index) => {
-        const flipped = flippedCards.includes(index);
+    <div className="space-y-3">
+      <div className="flex items-center justify-between text-[11px]">
+        <span className="font-semibold text-emerald-300">
+          Card {safeIndex + 1} of {cards.length}
+        </span>
 
-        return (
-          <button
-            key={index}
-            type="button"
-            onClick={() => toggleCard(index)}
-            className={`min-h-40 rounded-xl border p-4 text-left transition ${
-              flipped
-                ? "border-purple-400 bg-purple-500/20"
-                : "border-emerald-400/60 bg-emerald-500/10"
-            }`}
-          >
-            <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-400">
-              Card {index + 1} · {flipped ? "Answer" : "Question"}
-            </p>
+        <span className="text-slate-400">
+          {flipped ? "Answer side" : "Question side"}
+        </span>
+      </div>
 
-            <p className="mt-3 text-sm font-semibold text-slate-100">
-              {flipped ? card.back : card.front}
-            </p>
+      <button
+        type="button"
+        onClick={() => setFlipped((current) => !current)}
+        className={`flex min-h-64 w-full flex-col items-center justify-center rounded-2xl border-2 p-6 text-center shadow-lg transition ${
+          flipped
+            ? "border-emerald-300 bg-gradient-to-br from-emerald-500/30 to-teal-500/20"
+            : "border-yellow-300 bg-gradient-to-br from-pink-500/40 to-purple-500/40"
+        }`}
+      >
+        <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-300">
+          {flipped ? "Answer" : "Question"}
+        </p>
 
-            <p className="mt-4 text-[10px] text-emerald-300">
-              Tap to see {flipped ? "question" : "answer"}
-            </p>
-          </button>
-        );
-      })}
+        <p className="mt-4 text-base font-semibold leading-relaxed text-white">
+          {flipped ? currentCard.back : currentCard.front}
+        </p>
+
+        <p className="mt-6 text-[11px] font-semibold text-yellow-200">
+          Tap card to flip
+        </p>
+      </button>
+
+      <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+        <button
+          type="button"
+          onClick={() => showCard(safeIndex - 1)}
+          className="rounded-full border border-purple-400 bg-slate-900 px-3 py-2 text-[11px] font-semibold text-slate-100"
+        >
+          ← Previous
+        </button>
+
+        <button
+          type="button"
+          onClick={() => showCard(safeIndex + 1)}
+          className="rounded-full border border-purple-400 bg-slate-900 px-3 py-2 text-[11px] font-semibold text-slate-100"
+        >
+          Next →
+        </button>
+
+        <button
+          type="button"
+          onClick={shuffleCard}
+          className="rounded-full border border-emerald-400 bg-emerald-500/15 px-3 py-2 text-[11px] font-semibold text-emerald-200"
+        >
+          🔀 Shuffle
+        </button>
+
+        <button
+          type="button"
+          onClick={() => {
+            setCurrentIndex(0);
+            setFlipped(false);
+          }}
+          className="rounded-full border border-slate-600 bg-slate-900 px-3 py-2 text-[11px] font-semibold text-slate-300"
+        >
+          Reset
+        </button>
+      </div>
     </div>
   );
 }
+
 
 const STUDY_GOALS: {
   id: Exclude<StudyGoal, "unset">;
