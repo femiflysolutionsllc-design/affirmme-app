@@ -1960,10 +1960,10 @@ quizCount,
 )}
             {/* History */}
             {tutorHistory[currentSubject]?.length ? (
-              <div className="space-y-1 rounded-lg border border-slate-800 bg-slate-950/95 p-3 max-h-44 overflow-y-auto">
-                <p className="text-[11px] font-semibold text-emerald-200">
+              <details className="space-y-1 rounded-lg border border-slate-800 bg-slate-950/95 p-3 max-h-44 overflow-y-auto">
+                <summary className="text-[11px] font-semibold text-emerald-200">
                   Recent tutor history for this subject
-                </p>
+                </summary>
                 {tutorHistory[currentSubject]
                   .slice()
                   .reverse()
@@ -1983,7 +1983,7 @@ quizCount,
                       </p>
                     </div>
                   ))}
-              </div>
+              </details>
             ) : (
               <p className="text-[10px] text-slate-500">
                 No tutor history yet for this subject.
