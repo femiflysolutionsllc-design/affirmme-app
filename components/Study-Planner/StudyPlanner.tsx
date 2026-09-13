@@ -987,6 +987,8 @@ export default function StudyPlanner() {
   const [tutorLoading, setTutorLoading] = useState(false);
   const [tutorError, setTutorError] = useState<string | null>(null);
   const [tutorResponse, setTutorResponse] = useState<string>("");
+  const [followUpText, setFollowUpText] = useState("");
+  const [followUpLoading, setFollowUpLoading] = useState(false);
 
   const [studyAction, setStudyAction] =
   useState<StudyAction>("explain");
@@ -1164,9 +1166,14 @@ Please explain step-by-step in simple language, then:
 
   // --------- AI Tutor + Test + PDF ----------
 
-  async function handleAskTutor() {
-    if (!helperText?.trim() && !CHEAT_SHEETS[currentSubject]) {
-      alert("Write at least one sentence about what you’re stuck on first.");
+  async function handleAskTutor(customQuestion?: unknown) {
+    const requestText =
+      typeof customQuestion === "string" && customQuestion.trim()
+        ? customQuestion.trim()
+        : helperText?.trim() || "";
+  
+    if (!requestText && !CHEAT_SHEETS[currentSubject]) {
+      alert("Write at least one sentence about what you're stuck on first.");
       return;
     }
 
@@ -1181,9 +1188,9 @@ Please explain step-by-step in simple language, then:
           subjectKey: currentSubject,
           subjectLabel: subjectLabels[currentSubject] ?? SUBJECT_LABELS[currentSubject],
           levelLabel: programInfo.label,
-          helperText,
+          helperText: requestText,
           action: studyAction,
-sourceText: helperText,
+sourceText: requestText,
 quizCount,
           cheatSheet: CHEAT_SHEETS[currentSubject],
           history:
@@ -1242,7 +1249,7 @@ quizCount,
         const existing = prev[currentSubject] ?? [];
         const updated = [
           ...existing,
-          { timestamp, question: helperText?.trim() || "[General help request]", answer },
+          { timestamp, question: requestText || "[General help request]", answer },
         ].slice(-20);
 
         return { ...prev, [currentSubject]: updated };
@@ -1256,6 +1263,20 @@ quizCount,
       );
     } finally {
       setTutorLoading(false);
+    }
+  }
+
+  async function handleFollowUp(message?: string) {
+    const text = (message ?? followUpText).trim();
+  
+    if (!text || tutorLoading || followUpLoading) return;
+  
+    try {
+      setFollowUpLoading(true);
+      setFollowUpText("");
+      await handleAskTutor(text);
+    } finally {
+      setFollowUpLoading(false);
     }
   }
 
@@ -1956,6 +1977,62 @@ quizCount,
         {tutorResponse}
       </p>
     )}
+
+<div className="mt-3 space-y-2 rounded-lg border border-purple-500/30 bg-slate-950/80 p-3">
+<p className="text-[11px] font-semibold text-pink-300">
+  Continue with Zaryx
+</p>
+
+<div className="flex flex-wrap gap-2">
+  {[
+    ["Yes", "Yes, please continue."],
+    ["No", "No, thank you."],
+    ["Picture Ideas", "Suggest helpful pictures or labeled diagrams for this material."],
+    ["Graph Ideas", "Add a simple helpful graph or chart for this material."],
+  ].map(([label, message]) => (
+    <button
+      key={label}
+      type="button"
+      onClick={() => void handleFollowUp(message)}
+      disabled={tutorLoading || followUpLoading}
+      className="rounded-full border border-purple-500/50 bg-purple-500/10 px-3 py-1.5 text-[11px] text-purple-100 hover:bg-purple-500/20 disabled:opacity-50"
+    >
+      {label}
+    </button>
+  ))}
+</div>
+
+<div className="flex flex-col gap-2 sm:flex-row">
+  <input
+    type="text"
+    value={followUpText}
+    onChange={(event) => setFollowUpText(event.target.value)}
+    onKeyDown={(event) => {
+      if (event.key === "Enter") void handleFollowUp();
+    }}
+    placeholder="Reply to Zaryx..."
+    className="min-w-0 flex-1 rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-[11px] text-slate-100 outline-none placeholder:text-slate-500 focus:border-purple-400"
+  />
+
+  <button
+    type="button"
+    onClick={() => void handleFollowUp()}
+    disabled={!followUpText.trim() || tutorLoading || followUpLoading}
+    className="rounded-lg bg-gradient-to-r from-pink-500 to-purple-500 px-4 py-2 text-[11px] font-semibold text-white disabled:opacity-50"
+  >
+    {followUpLoading ? "Zaryx is thinking..." : "Send"}
+  </button>
+
+  <button
+    type="button"
+    disabled
+    title="Voice conversations are coming in V2"
+    className="rounded-lg border border-slate-700 px-3 py-2 text-[11px] text-slate-400 opacity-70"
+  >
+    🎙️ Voice · V2
+  </button>
+</div>
+</div>
   </div>
 )}
             {/* History */}
