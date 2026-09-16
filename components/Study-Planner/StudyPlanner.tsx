@@ -990,6 +990,16 @@ export default function StudyPlanner() {
   const [followUpText, setFollowUpText] = useState("");
   const [followUpLoading, setFollowUpLoading] = useState(false);
 
+  const [studyVisuals, setStudyVisuals] = useState<
+    Array<{
+      title: string;
+      imageUrl: string;
+      sourceUrl: string;
+    }>
+  >([]);
+  const [visualsLoading, setVisualsLoading] = useState(false);
+  const [visualsError, setVisualsError] = useState<string | null>(null);
+
   const [studyAction, setStudyAction] =
   useState<StudyAction>("explain");
 
@@ -1277,6 +1287,141 @@ quizCount,
       await handleAskTutor(text);
     } finally {
       setFollowUpLoading(false);
+    }
+  }
+
+  async function handleLoadVisuals() {
+    const subject =
+      subjectLabels[currentSubject] ??
+      SUBJECT_LABELS[currentSubject] ??
+      currentSubject;
+
+    const latestQuestion =
+      tutorHistory[currentSubject]?.slice(-1)[0]?.question ??
+      helperText?.trim() ??
+      "";
+
+      const stopWords = new Set([
+        "show",
+        "tell",
+        "explain",
+        "help",
+        "please",
+        "picture",
+        "pictures",
+        "diagram",
+        "diagrams",
+        "part",
+        "parts",
+        "normal",
+        "about",
+        "with",
+        "from",
+        "that",
+        "this",
+        "what",
+        "where",
+        "when",
+        "which",
+        "your",
+        "into",
+        "the",
+        "and",
+        "for",
+        "you",
+      ]);
+  
+      const query =
+        latestQuestion
+          .replace(/\bEKG\b/gi, "ECG")
+          .split(/[^a-zA-Z0-9]+/)
+          .filter(
+            (word) =>
+              word.length > 2 &&
+              !stopWords.has(word.toLowerCase())
+          )
+          .slice(0, 4)
+          .join(" ") || subject;
+
+    try {
+      setVisualsLoading(true);
+      setVisualsError(null);
+      setStudyVisuals([]);
+
+      const params = new URLSearchParams({
+        action: "query",
+        format: "json",
+        origin: "*",
+        generator: "search",
+        gsrsearch: query,
+        gsrnamespace: "6",
+        gsrlimit: "6",
+        prop: "imageinfo",
+        iiprop: "url|mime",
+        iiurlwidth: "700",
+      });
+
+      const res = await fetch(
+        `https://commons.wikimedia.org/w/api.php?${params.toString()}`
+      );
+
+      if (!res.ok) {
+        throw new Error(`Visual search failed: ${res.status}`);
+      }
+
+      const data = await res.json();
+
+      const pages = Object.values(
+        data?.query?.pages ?? {}
+      ) as Array<{
+        title?: string;
+        imageinfo?: Array<{
+          thumburl?: string;
+          descriptionurl?: string;
+          mime?: string;
+        }>;
+      }>;
+
+      const images = pages
+        .flatMap((page) => {
+          const info = page.imageinfo?.[0];
+
+          if (
+            !info?.thumburl ||
+            !info?.descriptionurl ||
+            !info?.mime?.startsWith("image/")
+          ) {
+            return [];
+          }
+
+          return [
+            {
+              title:
+                page.title?.replace(/^File:/, "") ??
+                "Study visual",
+              imageUrl: info.thumburl,
+              sourceUrl: info.descriptionurl,
+            },
+          ];
+        })
+        .slice(0, 4);
+
+      setStudyVisuals(images);
+
+      if (images.length === 0) {
+        setVisualsError(
+          "No matching visuals were found. Try a more specific question."
+        );
+      }
+    } catch (error) {
+      console.error(error);
+      setVisualsError(
+        error instanceof Error
+          ? error.message
+          : "Visuals could not be loaded."
+      );
+    } finally {
+      setVisualsLoading(false);
     }
   }
 
@@ -1899,6 +2044,102 @@ quizCount,
               </div>
             </div>
 
+            <div className="space-y-3 rounded-xl border border-emerald-500/30 bg-slate-950/80 p-3">
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <p className="text-[11px] font-semibold text-emerald-200">
+                  Real study pictures
+                </p>
+                <p className="text-[10px] text-slate-400">
+                  Find real, source-linked visuals for the notes or question above.
+                </p>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => void handleLoadVisuals()}
+                disabled={!helperText?.trim() || visualsLoading}
+                className="rounded-full border border-emerald-400 bg-emerald-500/90 px-4 py-2 text-[11px] font-semibold text-slate-950 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                {visualsLoading ? "Finding pictures..." : "Find Real Pictures"}
+              </button>
+            </div>
+
+            <div className="flex flex-wrap gap-2">
+              {[
+                "Khan Academy",
+                "CrashCourse",
+                "TED-Ed",
+                "RegisteredNurseRN",
+              ].map((channel) => {
+                const videoTopic =
+                  helperText?.trim() ||
+                  subjectLabels[currentSubject] ||
+                  SUBJECT_LABELS[currentSubject] ||
+                  currentSubject;
+
+                const videoUrl =
+                  "https://www.youtube.com/results?search_query=" +
+                  encodeURIComponent(`${videoTopic} ${channel}`);
+
+                return (
+                  <a
+                    key={channel}
+                    href={videoUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="rounded-full border border-purple-500/60 bg-purple-500/10 px-3 py-2 text-[10px] font-semibold text-purple-200 transition hover:bg-purple-500/20"
+                  >
+                    ▶ {channel} videos
+                  </a>
+                );
+              })}
+            </div> 
+
+            {visualsError && (
+              <p className="text-[11px] text-rose-300">
+                {visualsError}
+              </p>
+            )}
+
+            {studyVisuals.length > 0 && (
+              <>
+                <div className="grid gap-3 sm:grid-cols-2">
+                  {studyVisuals.map((visual, index) => (
+                    <a
+                      key={`${visual.sourceUrl}-${index}`}
+                      href={visual.sourceUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="overflow-hidden rounded-lg border border-slate-700 bg-slate-900 transition hover:border-emerald-400"
+                    >
+                      <img
+                        src={visual.imageUrl}
+                        alt={visual.title}
+                        loading="lazy"
+                        className="h-44 w-full bg-white object-contain"
+                      />
+
+                      <div className="p-2">
+                        <p className="line-clamp-2 text-[10px] text-slate-200">
+                          {visual.title}
+                        </p>
+                        <p className="mt-1 text-[10px] font-semibold text-emerald-300">
+                          View image source
+                        </p>
+                      </div>
+                    </a>
+                  ))}
+                </div>
+
+                <p className="text-[10px] text-slate-400">
+                  Study aid only. Verify medical details with your course
+                  materials or current clinical guidance.
+                </p>
+              </>
+            )}
+          </div>
+
           {/* Zaryx study tools */}
 <div className="mt-3 space-y-3 rounded-xl border border-slate-800 bg-slate-950/80 p-3">
   <p className="text-[11px] font-semibold text-emerald-300">
@@ -1987,20 +2228,20 @@ quizCount,
   {[
     ["Yes", "Yes, please continue."],
     ["No", "No, thank you."],
-    ["Picture Ideas", "Suggest helpful pictures or labeled diagrams for this material."],
     ["Graph Ideas", "Add a simple helpful graph or chart for this material."],
   ].map(([label, message]) => (
     <button
       key={label}
       type="button"
       onClick={() => void handleFollowUp(message)}
-      disabled={tutorLoading || followUpLoading}
+      disabled={tutorLoading || followUpLoading || visualsLoading}
       className="rounded-full border border-purple-500/50 bg-purple-500/10 px-3 py-1.5 text-[11px] text-purple-100 hover:bg-purple-500/20 disabled:opacity-50"
     >
       {label}
     </button>
   ))}
 </div>
+
 
 <div className="flex flex-col gap-2 sm:flex-row">
   <input
