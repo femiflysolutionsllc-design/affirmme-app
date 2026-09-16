@@ -6,6 +6,7 @@ import TodayWin from "./TodayWin";
 import GoalsBoard from "./GoalsBoard";
 import { usePersistentState } from "../hooks/usePersistentState";
 
+
 /**
  * Simple helpers to speak text out loud using the browser TTS.
  */
@@ -64,13 +65,14 @@ export default function HomeDashboard() {
 
   return (
     <section className="space-y-4">
+    
       {/* Top: Affirmation */}
       <DailyAffirmation />
 
     <div className="rounded-full bg-emerald-500/20 px-4 py-2 text-xs font-bold text-emerald-200">
       Ready
     </div>
-  </div>
+  
 
   <div className="mt-5 grid gap-3 md:grid-cols-2">
     <div className="rounded-xl bg-slate-800/80 p-4">
@@ -97,7 +99,7 @@ export default function HomeDashboard() {
   >
     🔊 Read today’s briefing
   </button>
-</div>
+
 
       {/* Daily goals + schedule summary (simple text for now) */}
       <div className="grid gap-4 md:grid-cols-2">

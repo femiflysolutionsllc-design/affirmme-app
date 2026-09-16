@@ -16,6 +16,7 @@ import DailySummaryWithQuestions from "../components/Home/DailySummaryWithQuesti
 import WhatChangedPanel from "../components/Home/WhatChangedPanel";
 import TodaysPriorities from "../components/TodaysPriorities";
 import NextBestStep from "../components/NextBestStep";
+import ZaryxWelcome from "../components/ZaryxWelcome";
 
 // ---------- MIND & MOOD ----------
 import MoodCheckIn from "../components/affirmations/MoodCheckIn";
@@ -247,6 +248,8 @@ export default function Page() {
                 and what needs your attention.
               </p>
             </header>
+
+            <ZaryxWelcome userName={userName} />
 
             <section className="grid gap-4 md:grid-cols-2">
               <div className="space-y-3">
