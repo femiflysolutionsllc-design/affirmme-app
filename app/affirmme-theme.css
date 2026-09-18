@@ -77,18 +77,18 @@ html[data-theme="comic"] {
   --font-body: Arial, Helvetica, sans-serif;
 
   --page-bg: #020617;
-  --surface-main: #0a1024;
-  --surface-card: #111933;
-  --surface-input: #080a16;
+  --surface-main: #050b1c;
+  --surface-card: #081b3f;
+  --surface-input: #07142d;
 
   --text-main: #ffffff;
-  --text-soft: #cbd5e1;
-  --text-muted: #94a3b8;
+  --text-soft: #dbeafe;
+  --text-muted: #93c5fd;
 
   --accent-green: #22c55e;
-  --accent-blue: #60a5fa;
-  --accent-yellow: #facc15;
-  --accent-pink: #f43f7a;
+  --accent-blue: #135bd8;
+  --accent-yellow: #ffd21f;
+  --accent-pink: #e32636;
 
   --card-radius: 28px;
   --card-border: 3px solid #000000;
@@ -6311,42 +6311,41 @@ html[data-theme="classic"]
   
   /* Daily Command Center */
   
-  html[data-theme="comic"]
-    .home-command-header {
-    border: 3px solid #ff2d8d !important;
-    background: #0d0712 !important;
+  html[data-theme="comic"] .home-command-header {
+    border: 3px solid #135bd8 !important;
+    background: #07142d !important;
     box-shadow:
-      6px 6px 0 #f6c453,
+      6px 6px 0 #ffd21f,
       10px 10px 0 #000000 !important;
   }
   
   html[data-theme="comic"]
     .home-command-header > p:first-child {
-    color: #f6c453 !important;
+    color: #ffd21f !important;
     letter-spacing: 0.22em !important;
   }
   
   html[data-theme="comic"]
     .home-command-header h2 {
     color: #ffffff !important;
-    text-shadow: 3px 3px 0 #8b174f !important;
+    text-shadow: 3px 3px 0 #e32636 !important;
   }
   
   html[data-theme="comic"]
     .home-command-header h2 + p {
-    color: #d9cfdf !important;
+    color: #dbeafe !important;
   }
   
   /* Morning affirmation */
   
   html[data-theme="comic"]
-    .home-affirmation-panel {
-    border: 3px solid #ff2d8d !important;
-    background: #0b0610 !important;
-    box-shadow:
-      5px 5px 0 #8b174f,
-      9px 9px 0 #000000 !important;
-  }
+  .home-affirmation-panel {
+  border: 3px solid #e32636 !important;
+  background: #081b3f !important;
+  box-shadow:
+    5px 5px 0 #ffd21f,
+    9px 9px 0 #000000 !important;
+}
   
   /* Weather */
   
@@ -6362,13 +6361,13 @@ html[data-theme="classic"]
   /* Morning and night check-in */
   
   html[data-theme="comic"]
-    .home-checkin-panel {
-    border: 3px solid #a855f7 !important;
-    background: #090611 !important;
-    box-shadow:
-      5px 5px 0 #ff2d8d,
-      9px 9px 0 #000000 !important;
-  }
+  .home-checkin-panel {
+  border: 3px solid #135bd8 !important;
+  background: #07142d !important;
+  box-shadow:
+    5px 5px 0 #e32636,
+    9px 9px 0 #000000 !important;
+}
 
   /* ======================================================
    COMIC HERO — AFFIRMATION + WEATHER
@@ -6377,32 +6376,32 @@ html[data-theme="classic"]
 /* Affirmation inner card */
 
 html[data-theme="comic"]
-.home-affirmation-panel > section {
-border: 2px solid #ff4aa2 !important;
-background:
-  radial-gradient(
-    circle,
-    rgba(255, 45, 141, 0.18) 1px,
-    transparent 2px
-  ),
-  linear-gradient(
-    135deg,
-    #250819,
-    #120814 70%
-  ) !important;
-background-size:
-  12px 12px,
-  auto !important;
-box-shadow: inset 0 0 30px rgba(255, 45, 141, 0.12) !important;
+  .home-affirmation-panel > section {
+  border: 2px solid #ffd21f !important;
+  background:
+    radial-gradient(
+      circle,
+      rgba(255, 210, 31, 0.2) 1px,
+      transparent 2px
+    ),
+    linear-gradient(
+      135deg,
+      #0b2a66,
+      #07142d 70%
+    ) !important;
+  background-size:
+    12px 12px,
+    auto !important;
+  box-shadow: inset 0 0 30px rgba(19, 91, 216, 0.28) !important;
 }
 
 html[data-theme="comic"]
-.home-affirmation-panel h2 {
-color: #ff72b6 !important;
-font-weight: 900 !important;
-text-transform: uppercase !important;
-letter-spacing: 0.04em !important;
-text-shadow: 2px 2px 0 #4d092d !important;
+  .home-affirmation-panel h2 {
+  color: #ffd21f !important;
+  font-weight: 900 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.04em !important;
+  text-shadow: 2px 2px 0 #e32636 !important;
 }
 
 html[data-theme="comic"]
@@ -6411,24 +6410,24 @@ color: #ddd2e2 !important;
 }
 
 html[data-theme="comic"]
-.home-affirmation-panel button {
-border: 2px solid #ff4aa2 !important;
-background: #150812 !important;
-color: #ffffff !important;
-font-weight: 800 !important;
+  .home-affirmation-panel button {
+  border: 2px solid #ffd21f !important;
+  background: #135bd8 !important;
+  color: #ffffff !important;
+  font-weight: 800 !important;
 }
 
 html[data-theme="comic"]
-.home-affirmation-panel button:hover {
-background: #ff2d8d !important;
-color: #ffffff !important;
+  .home-affirmation-panel button:hover {
+  background: #e32636 !important;
+  color: #ffffff !important;
 }
 
 html[data-theme="comic"]
-.home-affirmation-panel
-#daily-affirmation-text {
-color: #ffb2d5 !important;
-font-weight: 800 !important;
+  .home-affirmation-panel
+  #daily-affirmation-text {
+  color: #ffffff !important;
+  font-weight: 800 !important;
 }
 
 /* Weather inner card */
@@ -9250,3 +9249,294 @@ html[data-theme="comic"] .mind-subnav-button {
   line-height: 1.15 !important;
   letter-spacing: 0.02em !important;
 }
+
+/* =========================================================
+   AFFIRMME V1 — COMIC HERO BLUE MASTER OVERRIDE
+   Scoped to Comic only. Elegant and Classic are unaffected.
+   ========================================================= */
+
+   html[data-theme="comic"] {
+    --comic-page: #020617;
+    --comic-surface: #050b1c;
+    --comic-card: #081b3f;
+    --comic-input: #07142d;
+  
+    --comic-blue: #135bd8;
+    --comic-blue-light: #38bdf8;
+    --comic-red: #e32636;
+    --comic-yellow: #ffd21f;
+    --comic-green: #22c55e;
+  
+    --comic-white: #ffffff;
+    --comic-soft: #dbeafe;
+    --comic-muted: #93c5fd;
+    --comic-black: #000000;
+  
+    --page-bg: var(--comic-page);
+    --surface-main: var(--comic-surface);
+    --surface-card: var(--comic-card);
+    --surface-input: var(--comic-input);
+  
+    --text-main: var(--comic-white);
+    --text-soft: var(--comic-soft);
+    --text-muted: var(--comic-muted);
+  
+    --accent-green: var(--comic-green);
+    --accent-blue: var(--comic-blue);
+    --accent-yellow: var(--comic-yellow);
+    --accent-pink: var(--comic-red);
+  }
+  
+  /* ---------- Page foundation ---------- */
+  
+  html[data-theme="comic"],
+  html[data-theme="comic"] body {
+    background-color: var(--comic-page) !important;
+    color: var(--comic-white) !important;
+  }
+  
+  /* ---------- Convert old pink and purple utility colors ---------- */
+  
+  html[data-theme="comic"]
+    :where(
+      [class*="border-pink"],
+      [class*="border-fuchsia"]
+    ) {
+    border-color: var(--comic-red) !important;
+  }
+  
+  html[data-theme="comic"]
+    :where(
+      [class*="border-purple"],
+      [class*="border-violet"]
+    ) {
+    border-color: var(--comic-blue) !important;
+  }
+  
+  html[data-theme="comic"]
+    :where(
+      [class*="bg-pink"],
+      [class*="bg-fuchsia"]
+    ) {
+    background-color: var(--comic-red) !important;
+  }
+  
+  html[data-theme="comic"]
+    :where(
+      [class*="bg-purple"],
+      [class*="bg-violet"]
+    ) {
+    background-color: var(--comic-blue) !important;
+  }
+  
+  html[data-theme="comic"]
+    :where(
+      [class*="text-pink"],
+      [class*="text-fuchsia"]
+    ) {
+    color: var(--comic-yellow) !important;
+  }
+  
+  html[data-theme="comic"]
+    :where(
+      [class*="text-purple"],
+      [class*="text-violet"]
+    ) {
+    color: var(--comic-soft) !important;
+  }
+  
+  /* ---------- Shared Comic buttons ---------- */
+  
+  html[data-theme="comic"]
+    :where(
+      button,
+      [role="button"]
+    ) {
+    font-family: var(--font-action) !important;
+    font-weight: 800 !important;
+  }
+  
+  html[data-theme="comic"]
+    :where(
+      button,
+      [role="button"]
+    ):focus-visible {
+    outline: 3px solid var(--comic-yellow) !important;
+    outline-offset: 3px !important;
+  }
+  
+  /* ---------- Shared fields ---------- */
+  
+  html[data-theme="comic"]
+    :where(
+      input,
+      textarea,
+      select
+    ) {
+    background-color: var(--comic-input) !important;
+    border-color: var(--comic-blue) !important;
+    color: var(--comic-white) !important;
+  }
+  
+  html[data-theme="comic"]
+    :where(
+      input,
+      textarea
+    )::placeholder {
+    color: var(--comic-muted) !important;
+    opacity: 1 !important;
+  }
+  
+  /* ---------- Daily Command Center ---------- */
+  
+  html[data-theme="comic"] .home-command-header {
+    border: 3px solid var(--comic-blue) !important;
+    background: var(--comic-input) !important;
+    box-shadow:
+      6px 6px 0 var(--comic-yellow),
+      10px 10px 0 var(--comic-black) !important;
+  }
+  
+  html[data-theme="comic"]
+    .home-command-header > p:first-child {
+    color: var(--comic-yellow) !important;
+  }
+  
+  html[data-theme="comic"]
+    .home-command-header h2 {
+    color: var(--comic-white) !important;
+    text-shadow: 3px 3px 0 var(--comic-red) !important;
+  }
+  
+  html[data-theme="comic"]
+    .home-command-header h2 + p {
+    color: var(--comic-soft) !important;
+  }
+  
+  /* ---------- Morning Affirmation ---------- */
+  
+  html[data-theme="comic"] .home-affirmation-panel {
+    border: 3px solid var(--comic-red) !important;
+    background: var(--comic-card) !important;
+    box-shadow:
+      5px 5px 0 var(--comic-yellow),
+      9px 9px 0 var(--comic-black) !important;
+  }
+  
+  html[data-theme="comic"]
+    .home-affirmation-panel > section {
+    border: 2px solid var(--comic-yellow) !important;
+    background:
+      radial-gradient(
+        circle,
+        rgba(255, 210, 31, 0.2) 1px,
+        transparent 2px
+      ),
+      linear-gradient(
+        135deg,
+        #0b2a66,
+        var(--comic-input) 70%
+      ) !important;
+    background-size:
+      12px 12px,
+      auto !important;
+    box-shadow:
+      inset 0 0 30px rgba(19, 91, 216, 0.28) !important;
+  }
+  
+  html[data-theme="comic"]
+    .home-affirmation-panel h2 {
+    color: var(--comic-yellow) !important;
+    text-shadow: 2px 2px 0 var(--comic-red) !important;
+  }
+  
+  html[data-theme="comic"]
+    .home-affirmation-panel button {
+    border: 2px solid var(--comic-yellow) !important;
+    background: var(--comic-blue) !important;
+    color: var(--comic-white) !important;
+  }
+  
+  html[data-theme="comic"]
+    .home-affirmation-panel button:hover {
+    background: var(--comic-red) !important;
+  }
+  
+  html[data-theme="comic"]
+    .home-affirmation-panel
+    #daily-affirmation-text {
+    color: var(--comic-white) !important;
+  }
+  
+  /* ---------- Morning and Night Check-In ---------- */
+  
+  html[data-theme="comic"] .home-checkin-panel {
+    border: 3px solid var(--comic-blue) !important;
+    background: var(--comic-input) !important;
+    box-shadow:
+      5px 5px 0 var(--comic-red),
+      9px 9px 0 var(--comic-black) !important;
+  }
+  
+  html[data-theme="comic"]
+    .home-checkin-panel
+    [class*="bg-slate-900"] {
+    border: 2px solid var(--comic-yellow) !important;
+    background:
+      radial-gradient(
+        circle,
+        rgba(255, 210, 31, 0.18) 1px,
+        transparent 2px
+      ),
+      linear-gradient(
+        135deg,
+        #0b2a66,
+        var(--comic-input) 72%
+      ) !important;
+    background-size:
+      12px 12px,
+      auto !important;
+  }
+  
+  html[data-theme="comic"]
+    .home-checkin-panel p {
+    color: var(--comic-soft) !important;
+  }
+  
+  html[data-theme="comic"]
+    .home-checkin-panel button {
+    border: 2px solid var(--comic-yellow) !important;
+    background: var(--comic-blue) !important;
+    color: var(--comic-white) !important;
+  }
+  
+  html[data-theme="comic"]
+    .home-checkin-panel button:hover {
+    background: var(--comic-red) !important;
+  }
+  
+  /* ---------- Comic headings ---------- */
+  
+  html[data-theme="comic"]
+    :where(
+      h1,
+      h2,
+      h3
+    ) {
+    color: var(--comic-white);
+  }
+  
+  html[data-theme="comic"]
+    :where(
+      h1,
+      h2
+    ) {
+    font-family: var(--font-heading) !important;
+  }
+  
+  /* ---------- Accessible selection ---------- */
+  
+  html[data-theme="comic"] ::selection {
+    background: var(--comic-yellow);
+    color: var(--comic-black);
+  }
